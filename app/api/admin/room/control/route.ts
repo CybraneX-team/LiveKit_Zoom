@@ -56,6 +56,24 @@ export async function POST(req: Request) {
         await client.updateParticipant(roomName, participantId, undefined, undefined, JSON.stringify({ handRaised: value }));
         return NextResponse.json({ success: true, message: `Hand ${value ? 'raised' : 'lowered'}` });
 
+      case 'stopVideo':
+        if (!participantId) {
+          return NextResponse.json({ error: 'No participant specified' }, { status: 400 });
+        }
+        await client.updateParticipant(roomName, participantId, undefined, {
+          canPublish: false,
+        });
+        return NextResponse.json({ success: true, message: 'Video stopped' });
+    
+      case 'startVideo':
+        if (!participantId) {
+          return NextResponse.json({ error: 'No participant specified' }, { status: 400 });
+        }
+        await client.updateParticipant(roomName, participantId, undefined, {
+          canPublish: true,
+        });
+        return NextResponse.json({ success: true, message: 'Video enabled' });
+
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
     }
